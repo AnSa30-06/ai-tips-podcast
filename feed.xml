@@ -28,8 +28,77 @@
     <itunes:category text="Technology">
       <itunes:category text="How To"/>
     </itunes:category>
-    <lastBuildDate>Tue, 28 Jul 2026 06:00:00 +0530</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2026 06:00:00 +0530</lastBuildDate>
 
+    <item>
+      <title>Episode 2: Let Your Agent Open the Browser</title>
+      <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
+      <guid isPermaLink="false">ai-workflow-daily-0002</guid>
+      <pubDate>Thu, 30 Jul 2026 06:00:00 +0530</pubDate>
+      <itunes:season>1</itunes:season>
+      <itunes:episode>2</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:duration>00:13:40</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:author>Anmol</itunes:author>
+      <description><![CDATA[Your coding agent doesn't have to guess about web bugs it can't see. Today we hand it a live Chrome browser with chrome-devtools-mcp, the free tool from the Chrome DevTools team, so it reads the real console errors and network requests instead of theorizing. Plus three fresh finds, two cost-and-safety tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- Fresh Find 1: Nano Banana 2 Lite, Google's cheapest image tier (about three and a half cents per 1K-resolution image, per one image, not per a thousand).
+- Fresh Find 2: Rowboat, an open-source desktop AI coworker with a memory of your work (Apache-2.0, free app, your own model keys).
+- Fresh Find 3: GPT Transcribe and GPT Live Transcribe, OpenAI's new speech-to-text (under half a cent a minute, and about 1.7 cents a minute for live).
+- The Recipe: let your agent debug a live web page with chrome-devtools-mcp.
+- Tip 1: route by task difficulty across one model family (OpenAI ~5x cheaper, Google ~8x cheaper, vendors' own list prices).
+- Tip 2: use Claude Code checkpoints and /rewind to roll back a bad agent edit (but keep committing to Git).
+- Do This Today: install chrome-devtools-mcp and point your agent at one real broken page, in under ten minutes.
+
+## Sources
+
+- [chrome-devtools-mcp (Chrome DevTools team)](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- [chrome-devtools-mcp troubleshooting guide](https://raw.githubusercontent.com/ChromeDevTools/chrome-devtools-mcp/main/docs/troubleshooting.md)
+- [Google: Nano Banana 2 Lite announcement](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni-flash-nano-banana-2-lite/)
+- [Google Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing)
+- [Rowboat (Rowboat Labs)](https://github.com/rowboatlabs/rowboat)
+- [OpenAI release notes](https://openai.com/products/release-notes/)
+- [OpenAI API pricing](https://developers.openai.com/api/docs/pricing)
+- [Claude Code checkpointing docs](https://code.claude.com/docs/en/checkpointing)
+
+Sister show: The AI Daily Wire — the same network's daily AI news brief.
+
+Built by:
+- Culmen Games (indie game studio) — studiosculmen@gmail.com
+- Handled (done-for-you content + AI agent workflows) — handled.anmol@gmail.com]]></description>
+      <content:encoded><![CDATA[Your coding agent doesn't have to guess about web bugs it can't see. Today we hand it a live Chrome browser with chrome-devtools-mcp, the free tool from the Chrome DevTools team, so it reads the real console errors and network requests instead of theorizing. Plus three fresh finds, two cost-and-safety tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- Fresh Find 1: Nano Banana 2 Lite, Google's cheapest image tier (about three and a half cents per 1K-resolution image, per one image, not per a thousand).
+- Fresh Find 2: Rowboat, an open-source desktop AI coworker with a memory of your work (Apache-2.0, free app, your own model keys).
+- Fresh Find 3: GPT Transcribe and GPT Live Transcribe, OpenAI's new speech-to-text (under half a cent a minute, and about 1.7 cents a minute for live).
+- The Recipe: let your agent debug a live web page with chrome-devtools-mcp.
+- Tip 1: route by task difficulty across one model family (OpenAI ~5x cheaper, Google ~8x cheaper, vendors' own list prices).
+- Tip 2: use Claude Code checkpoints and /rewind to roll back a bad agent edit (but keep committing to Git).
+- Do This Today: install chrome-devtools-mcp and point your agent at one real broken page, in under ten minutes.
+
+## Sources
+
+- [chrome-devtools-mcp (Chrome DevTools team)](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- [chrome-devtools-mcp troubleshooting guide](https://raw.githubusercontent.com/ChromeDevTools/chrome-devtools-mcp/main/docs/troubleshooting.md)
+- [Google: Nano Banana 2 Lite announcement](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni-flash-nano-banana-2-lite/)
+- [Google Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing)
+- [Rowboat (Rowboat Labs)](https://github.com/rowboatlabs/rowboat)
+- [OpenAI release notes](https://openai.com/products/release-notes/)
+- [OpenAI API pricing](https://developers.openai.com/api/docs/pricing)
+- [Claude Code checkpointing docs](https://code.claude.com/docs/en/checkpointing)
+
+Sister show: The AI Daily Wire — the same network's daily AI news brief.
+
+Built by:
+- Culmen Games (indie game studio) — studiosculmen@gmail.com
+- Handled (done-for-you content + AI agent workflows) — handled.anmol@gmail.com]]></content:encoded>
+      <enclosure url="https://ansa30-06.github.io/ai-tips-podcast/audio/0002.mp3" length="19697832" type="audio/mpeg"/>
+    </item>
     <item>
       <title>Episode 1: Welcome In - Four Terminal Agents and a Spend Cap</title>
       <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
