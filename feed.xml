@@ -28,8 +28,119 @@
     <itunes:category text="Technology">
       <itunes:category text="How To"/>
     </itunes:category>
-    <lastBuildDate>Thu, 30 Jul 2026 06:00:00 +0530</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 06:00:00 +0530</lastBuildDate>
 
+    <item>
+      <title>Episode 3: Your Agent Is Fixing a Bug That Doesn't Exist</title>
+      <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
+      <guid isPermaLink="false">ai-workflow-daily-0003</guid>
+      <pubDate>Wed, 05 Aug 2026 06:00:00 +0530</pubDate>
+      <itunes:season>1</itunes:season>
+      <itunes:episode>3</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:duration>00:20:18</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:author>Anmol</itunes:author>
+      <description><![CDATA[Two coding agents pointed at the same checkout will overwrite each other, and worse, an agent can't tell a port collision from a real bug, so it starts "fixing" code that was never broken. This episode is the full recipe for one worktree per agent: what a worktree actually is, the three vendors that shipped first-class support for it independently (and a fourth that documents the manual pattern), the exact steps, and the failure modes that were reproduced on a real machine rather than recalled from a blog post. Plus three finds, two tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- **QM** — Y Combinator open-sourced the multi-agent harness it uses internally. MIT, free and open source, but you bring your own model keys and your own hosting.
+- **Stacked pull requests** — GitHub's answer to the "five parallel agents, five branches" problem. In public preview and subject to change, rolling out to all repositories. GitHub names no price and no plan restriction. Needs GitHub CLI 2.90.0+ and Git 2.20+.
+- **TurboFieldfare** — Gemma 4 26B-A4B on Apple Silicon in about 2 GB of RAM, by streaming the mixture-of-experts weights from SSD. Apache 2.0. Apple Silicon only.
+- **The Recipe: one worktree per agent** — steps in order, what success looks like, the missing `.env`, port and database collisions, the "already used by worktree" error, and the branch that `remove` leaves behind.
+- **The myth corrected** — parallel agents do not fight over one `.git` index lock. Each linked worktree gets its own index.
+- **The counter-argument** — Alex Chaplinsky on why a worktree is a collision boundary, not a security boundary.
+- **Tip 1** — the core of Ankur Sethi's standing instruction for your agent, quoted verbatim (and honestly flagged: it's an excerpt, and he cites no studies).
+- **Tip 2** — JFrog found 54 of 55 SQLite advisories were fabricated, some scored 9.8 CRITICAL. The defence is one grep.
+- **Do This Today** — make one worktree, look at what's missing, write a `.worktreeinclude`, then tear it down including the branch.
+
+## Sources
+
+**Fresh Finds**
+- [QM — yc-software/qm](https://github.com/yc-software/qm)
+- [Y Combinator's announcement](https://x.com/ycombinator/status/2083243960684908768)
+- [Stacked pull requests are now in public preview](https://github.blog/changelog/2026-07-30-stacked-pull-requests-are-now-in-public-preview/)
+- [github/gh-stack](https://github.com/github/gh-stack)
+- [Stacked PRs quickstart](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)
+- [TurboFieldfare — drumih/turbo-fieldfare](https://github.com/drumih/turbo-fieldfare)
+
+**The Recipe**
+- [git-worktree — official documentation](https://git-scm.com/docs/git-worktree)
+- [OpenAI Codex — Git worktrees](https://learn.chatgpt.com/docs/environments/git-worktrees)
+- [Cursor — worktrees](https://cursor.com/docs/configuration/worktrees)
+- [Warp — how to run multiple AI coding agents](https://docs.warp.dev/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)
+- [Claude Code — worktrees](https://code.claude.com/docs/en/worktrees)
+- [Alex Chaplinsky — Git worktrees are not an isolation boundary for coding agents](https://fletch.sh/blog/git-worktrees-vs-clones-for-ai-agents/)
+- [Ally Piechowski — Your setup script should support Git worktrees](https://piechowski.io/post/setup-script-git-worktrees/)
+- [Mike McQuaid — Sandboxed agent worktrees](https://mikemcquaid.com/sandboxed-agent-worktrees-my-coding-and-ai-setup-in-2026/)
+- [copy-env — therohitdas](https://github.com/therohitdas/copy-env)
+- [Orca — Stably AI](https://github.com/stablyai/orca)
+
+**Two Quick Tips**
+- [Ankur Sethi — Prevent cognitive debt by manually retyping LLM-generated code](https://ankursethi.com/blog/prevent-cognitive-debt-by-manually-retyping-llm-generated-code/)
+- [Afek Berger, JFrog Security Research — SQLite Critical CVEs or LLM Slop?](https://research.jfrog.com/post/sqlite-critical-cves-or-llm-slops/)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+
+**Culmen Games** — an indie game studio building an Android roster solo. studiosculmen@gmail.com
+
+**Handled** — done-for-you content and AI agent workflows for creators and time-poor professionals. handled.anmol@gmail.com]]></description>
+      <content:encoded><![CDATA[Two coding agents pointed at the same checkout will overwrite each other, and worse, an agent can't tell a port collision from a real bug, so it starts "fixing" code that was never broken. This episode is the full recipe for one worktree per agent: what a worktree actually is, the three vendors that shipped first-class support for it independently (and a fourth that documents the manual pattern), the exact steps, and the failure modes that were reproduced on a real machine rather than recalled from a blog post. Plus three finds, two tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- **QM** — Y Combinator open-sourced the multi-agent harness it uses internally. MIT, free and open source, but you bring your own model keys and your own hosting.
+- **Stacked pull requests** — GitHub's answer to the "five parallel agents, five branches" problem. In public preview and subject to change, rolling out to all repositories. GitHub names no price and no plan restriction. Needs GitHub CLI 2.90.0+ and Git 2.20+.
+- **TurboFieldfare** — Gemma 4 26B-A4B on Apple Silicon in about 2 GB of RAM, by streaming the mixture-of-experts weights from SSD. Apache 2.0. Apple Silicon only.
+- **The Recipe: one worktree per agent** — steps in order, what success looks like, the missing `.env`, port and database collisions, the "already used by worktree" error, and the branch that `remove` leaves behind.
+- **The myth corrected** — parallel agents do not fight over one `.git` index lock. Each linked worktree gets its own index.
+- **The counter-argument** — Alex Chaplinsky on why a worktree is a collision boundary, not a security boundary.
+- **Tip 1** — the core of Ankur Sethi's standing instruction for your agent, quoted verbatim (and honestly flagged: it's an excerpt, and he cites no studies).
+- **Tip 2** — JFrog found 54 of 55 SQLite advisories were fabricated, some scored 9.8 CRITICAL. The defence is one grep.
+- **Do This Today** — make one worktree, look at what's missing, write a `.worktreeinclude`, then tear it down including the branch.
+
+## Sources
+
+**Fresh Finds**
+- [QM — yc-software/qm](https://github.com/yc-software/qm)
+- [Y Combinator's announcement](https://x.com/ycombinator/status/2083243960684908768)
+- [Stacked pull requests are now in public preview](https://github.blog/changelog/2026-07-30-stacked-pull-requests-are-now-in-public-preview/)
+- [github/gh-stack](https://github.com/github/gh-stack)
+- [Stacked PRs quickstart](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)
+- [TurboFieldfare — drumih/turbo-fieldfare](https://github.com/drumih/turbo-fieldfare)
+
+**The Recipe**
+- [git-worktree — official documentation](https://git-scm.com/docs/git-worktree)
+- [OpenAI Codex — Git worktrees](https://learn.chatgpt.com/docs/environments/git-worktrees)
+- [Cursor — worktrees](https://cursor.com/docs/configuration/worktrees)
+- [Warp — how to run multiple AI coding agents](https://docs.warp.dev/guides/agent-workflows/how-to-run-multiple-ai-coding-agents/)
+- [Claude Code — worktrees](https://code.claude.com/docs/en/worktrees)
+- [Alex Chaplinsky — Git worktrees are not an isolation boundary for coding agents](https://fletch.sh/blog/git-worktrees-vs-clones-for-ai-agents/)
+- [Ally Piechowski — Your setup script should support Git worktrees](https://piechowski.io/post/setup-script-git-worktrees/)
+- [Mike McQuaid — Sandboxed agent worktrees](https://mikemcquaid.com/sandboxed-agent-worktrees-my-coding-and-ai-setup-in-2026/)
+- [copy-env — therohitdas](https://github.com/therohitdas/copy-env)
+- [Orca — Stably AI](https://github.com/stablyai/orca)
+
+**Two Quick Tips**
+- [Ankur Sethi — Prevent cognitive debt by manually retyping LLM-generated code](https://ankursethi.com/blog/prevent-cognitive-debt-by-manually-retyping-llm-generated-code/)
+- [Afek Berger, JFrog Security Research — SQLite Critical CVEs or LLM Slop?](https://research.jfrog.com/post/sqlite-critical-cves-or-llm-slops/)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+
+**Culmen Games** — an indie game studio building an Android roster solo. studiosculmen@gmail.com
+
+**Handled** — done-for-you content and AI agent workflows for creators and time-poor professionals. handled.anmol@gmail.com]]></content:encoded>
+      <enclosure url="https://ansa30-06.github.io/ai-tips-podcast/audio/0003.mp3" length="29252379" type="audio/mpeg"/>
+    </item>
     <item>
       <title>Episode 2: Let Your Agent Open the Browser</title>
       <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
