@@ -28,8 +28,351 @@
     <itunes:category text="Technology">
       <itunes:category text="How To"/>
     </itunes:category>
-    <lastBuildDate>Wed, 05 Aug 2026 06:00:00 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 08 Aug 2026 06:00:00 +0530</lastBuildDate>
 
+    <item>
+      <title>Episode 6: Half the Tests Failed and the Build Went Green</title>
+      <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
+      <guid isPermaLink="false">ai-workflow-daily-0006</guid>
+      <pubDate>Sat, 08 Aug 2026 06:00:00 +0530</pubDate>
+      <itunes:season>1</itunes:season>
+      <itunes:episode>6</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:duration>00:18:19</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:author>Anmol</itunes:author>
+      <description><![CDATA[`PROMPTFOO_PASS_RATE_THRESHOLD` takes a **percentage, not a fraction** — so writing `0.9` when you meant 90% gives you a **0.9%** threshold, and CI goes green with half your tests failing. Nothing warns you. This episode builds the eval gate that makes swapping a model a check instead of a vibe: one YAML file, one `echo` provider, and an exit code you can read. Plus three finds, two tips, and a ten-minute thing to do today.
+
+No git this episode — episodes 3, 4 and 5 lived in worktrees and hooks, and this one deliberately leaves them.
+
+## In this episode
+
+- **Kimi K3 (Moonshot AI)** — 2.8T-parameter MoE, 104B activated per token, open weights, 1M context, natively multimodal (text, images and video). Weights went public **Monday 27 July 2026**. **The licence is the story.** Plenty of coverage carried "Modified MIT" forward from K2. It isn't. K2's file is titled *Modified MIT License*; K3's is titled *Kimi K3 License*, and **MIT is never named in it**. **Section 2** (MaaS revenue over **$20M across any consecutive 12 months** → separate agreement with Moonshot; and MaaS is defined narrowly, excluding models embedded in a specific product feature and excluding mere relaying to models hosted by others) and **Section 3** (**$20M per month** in revenue or 100M MAU → display "Kimi K3" in your UI) are **different units and must not be conflated**. **Section 4** exempts internal use and use via Moonshot's own products or certified inference partners — but "internal use" is defined as **not making the software, its outputs, or its underlying capabilities available to third parties**, which is narrower than "inside your own company". Weights are free; Moonshot **names no price** for the separate agreement, which is not the same as free.
+- **DeepSeek-V4-Flash-0731** — the official release, superseding the preview. `0731` is a **build date, not a version**. **304B parameters, read from the repo's own safetensors index**, not from press coverage. Active parameter count and context length are **not stated** on the model card page fetched, so the episode doesn't state them. **Licence: MIT** — verified from the repo's licence tag and the README. Weights free; **DeepSeek API pricing was not checked this run**.
+- **DwarfStar / `antirez/ds4` (Salvatore Sanfilippo, creator of Redis)** — **name mismatch: the repo and binary are `ds4`, the README calls it "DwarfStar"**. GitHub *repository* search for "DwarfStar" won't surface it (the name is in neither the repo name nor the description) — you'll get other people's wrappers instead. Search the path, `antirez/ds4`. A small native local inference engine tuned first for DeepSeek V4 Flash — and specifically the **0731 build**: the README names it repeatedly and ships `DeepSeek-V4-Flash-DSpark-support-0731.gguf`. Also GLM 5.2 and, on very-high-memory machines, DeepSeek V4 PRO. Metal / CUDA / ROCm. **MIT**, free, no paid tier named anywhere in the README or LICENSE. README credits **Georgi Gerganov** for the llama.cpp / GGML work. **Caveats in the maintainer's own words: "beta quality", DSpark "experimental" and opt-in, and — on 128 GB MacBooks — PRO q2 streaming "experimental but usable for inspection".** Metal's primary target is **Macs with 96 GB+**; smaller machines get `--ssd-streaming`. **Created back in May — ~20k stars and climbing, so trending, not new.** Its README also credits GPT 5.5, 5.6 and Claude Fable with "strong assistance", humans leading ideas, testing and debugging.
+- **The Recipe — put a pass/fail gate on your prompts before you change models.** promptfoo 0.122.0, **MIT — verified from the installed `package.json` and npm's registry entry.** (Neither OpenAI's post nor promptfoo's names a licence at all; OpenAI's says they'll "continue building the open-source project", which is a claim about openness, not a second confirmation of MIT.) **OpenAI announced its intent to acquire Promptfoo on Monday 9 March 2026 — announced, not closed: the post is titled "OpenAI *to acquire* Promptfoo" and says closing is subject to customary conditions.** Founders **Ian Webster** and **Michael D'Angelo** — worth knowing that an OpenAI-bound tool grades every vendor's models. **Price: Community is "Free Forever" including red teaming capped at 10,000 probes/month; Enterprise and On-Premise both say "Custom", which means promptfoo names no price — not the same as free.** Node floor is **`>=22.22.0`**, read off the installed package; the GitHub Action states the same floor and recommends Node 24 LTS.
+- **The steps** — `npx promptfoo@latest init --no-interactive` (**plain `init` is a wizard** — with nothing attached to answer it, it exits **130** and writes no files) → get a **zero-cost green run first** using the `echo` provider (seven deterministic assertion types passed, $0 spent) → then swap in the provider you actually ship → gate CI on the exit code.
+- **The exit-code contract, measured rather than quoted** — all pass: **0**. At least one assertion fails: **100**. Typo'd provider id, missing config, missing API key: **1**. So "promptfoo returns non-zero" is true and useless — a shell check for `$? -eq 1` catches the broken setup and **silently ignores every failing test**. (The 100 is the default; `PROMPTFOO_FAILED_TEST_EXIT_CODE` can override it, so check inherited CI before assuming.)
+- **Tip 1 — the threshold unit trap.** `PROMPTFOO_PASS_RATE_THRESHOLD` is a **percentage**, and it's inclusive (`>=`). Against a rigged 50% pass rate: `60` → exit 100, `50` → exit 0, **`0.9` → exit 0**, because it means 0.9%. **Write `90`, not `0.9`.** Precisely what's silent: the terminal *does* still print `✗ 1 failed (50.00%)` — what you don't get is any threshold message (that line only prints when the gate trips) and, critically, the **exit code is 0**. A human sees the failure; the machine gating your deploy sees success. The counter-intuitive bonus: **misspelling the variable name is safe** — `PROMPTFOO_PASSRATE_THRESHOLD` is ignored, the default applies, and the gate still fires. The name is forgiving; the value is not.
+- **Tip 2 — a typo'd assertion `type:` counts as an "error", not a "failure".** It still exits 100, so CI catches it, but the summary reads `0 passed, 0 failed, 1 error` — so a dashboard counting *failures* shows a clean green bar while nothing ran. Count errors too, or trust only the exit code.
+- **The honest counter-argument** — Hamel Husain and Shreya Shankar's evals FAQ, aired rather than softened. Note the attribution: the sharpest line ("all you get from prefab evals is you don't know what they actually do… at worst they create an illusion of confidence that is unjustified") is the FAQ **quoting one of their instructors, Eleanor Berger** — the authors' own version is "generic evaluations waste time and create false confidence". Theirs directly: "if you're passing 100% of your evals, you're likely not challenging your system enough", and you should be "extremely skeptical of this process being delegated". The harness is the easy part; the assertions are not.
+- **Stated on air** — none of this was run against a live frontier model this week. Everything was verified on Windows / Node 24.18.0 with the `echo` provider, so latency, cost accounting and `llm-rubric` model-graded behaviour are **not verified**. Also disclosed: **Claude Code requires a paid Claude plan (Pro, Max, Team, Enterprise, or API billing) — nothing on the free tier.**
+- **Do This Today** — one folder, one `promptfooconfig.yaml`, two test cases (one passing, one failing), then check the exit code. **You're looking for 100, not 1.**
+
+## Sources
+
+**Fresh Finds**
+- [moonshotai/Kimi-K3 — Hugging Face](https://huggingface.co/moonshotai/Kimi-K3)
+- [Kimi K3 LICENSE](https://huggingface.co/moonshotai/Kimi-K3/blob/main/LICENSE)
+- [Kimi-K2-Instruct LICENSE (for the "Modified MIT" contrast)](https://huggingface.co/moonshotai/Kimi-K2-Instruct/blob/main/LICENSE)
+- [Simon Willison — Kimi K3](https://simonwillison.net/2026/Jul/27/kimi-k3/)
+- [deepseek-ai/DeepSeek-V4-Flash-0731 — Hugging Face](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731)
+- [DeepSeek-V4-Flash-0731 — HF model API (parameter count)](https://huggingface.co/api/models/deepseek-ai/DeepSeek-V4-Flash-0731)
+- [antirez/ds4 — "DwarfStar"](https://github.com/antirez/ds4)
+- [ds4 README](https://github.com/antirez/ds4/blob/main/README.md)
+- [ds4 LICENSE](https://github.com/antirez/ds4/blob/main/LICENSE)
+
+**The Recipe**
+- [promptfoo — getting started](https://www.promptfoo.dev/docs/getting-started/)
+- [promptfoo — command line reference (exit codes)](https://www.promptfoo.dev/docs/usage/command-line/)
+- [promptfoo — the `echo` provider](https://www.promptfoo.dev/docs/providers/echo/)
+- [promptfoo — GitHub Action](https://www.promptfoo.dev/docs/integrations/github-action/)
+- [promptfoo — pricing](https://www.promptfoo.dev/pricing/)
+- [OpenAI to acquire Promptfoo](https://openai.com/index/openai-to-acquire-promptfoo/)
+- [Promptfoo — joining OpenAI](https://www.promptfoo.dev/blog/promptfoo-joining-openai/)
+- [Hamel Husain and Shreya Shankar — Evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+- **Culmen Games** — a solo-built indie game studio. studiosculmen@gmail.com
+- **Handled** — done-for-you content and AI agent workflows for creators and time-poor professionals. handled.anmol@gmail.com]]></description>
+      <content:encoded><![CDATA[`PROMPTFOO_PASS_RATE_THRESHOLD` takes a **percentage, not a fraction** — so writing `0.9` when you meant 90% gives you a **0.9%** threshold, and CI goes green with half your tests failing. Nothing warns you. This episode builds the eval gate that makes swapping a model a check instead of a vibe: one YAML file, one `echo` provider, and an exit code you can read. Plus three finds, two tips, and a ten-minute thing to do today.
+
+No git this episode — episodes 3, 4 and 5 lived in worktrees and hooks, and this one deliberately leaves them.
+
+## In this episode
+
+- **Kimi K3 (Moonshot AI)** — 2.8T-parameter MoE, 104B activated per token, open weights, 1M context, natively multimodal (text, images and video). Weights went public **Monday 27 July 2026**. **The licence is the story.** Plenty of coverage carried "Modified MIT" forward from K2. It isn't. K2's file is titled *Modified MIT License*; K3's is titled *Kimi K3 License*, and **MIT is never named in it**. **Section 2** (MaaS revenue over **$20M across any consecutive 12 months** → separate agreement with Moonshot; and MaaS is defined narrowly, excluding models embedded in a specific product feature and excluding mere relaying to models hosted by others) and **Section 3** (**$20M per month** in revenue or 100M MAU → display "Kimi K3" in your UI) are **different units and must not be conflated**. **Section 4** exempts internal use and use via Moonshot's own products or certified inference partners — but "internal use" is defined as **not making the software, its outputs, or its underlying capabilities available to third parties**, which is narrower than "inside your own company". Weights are free; Moonshot **names no price** for the separate agreement, which is not the same as free.
+- **DeepSeek-V4-Flash-0731** — the official release, superseding the preview. `0731` is a **build date, not a version**. **304B parameters, read from the repo's own safetensors index**, not from press coverage. Active parameter count and context length are **not stated** on the model card page fetched, so the episode doesn't state them. **Licence: MIT** — verified from the repo's licence tag and the README. Weights free; **DeepSeek API pricing was not checked this run**.
+- **DwarfStar / `antirez/ds4` (Salvatore Sanfilippo, creator of Redis)** — **name mismatch: the repo and binary are `ds4`, the README calls it "DwarfStar"**. GitHub *repository* search for "DwarfStar" won't surface it (the name is in neither the repo name nor the description) — you'll get other people's wrappers instead. Search the path, `antirez/ds4`. A small native local inference engine tuned first for DeepSeek V4 Flash — and specifically the **0731 build**: the README names it repeatedly and ships `DeepSeek-V4-Flash-DSpark-support-0731.gguf`. Also GLM 5.2 and, on very-high-memory machines, DeepSeek V4 PRO. Metal / CUDA / ROCm. **MIT**, free, no paid tier named anywhere in the README or LICENSE. README credits **Georgi Gerganov** for the llama.cpp / GGML work. **Caveats in the maintainer's own words: "beta quality", DSpark "experimental" and opt-in, and — on 128 GB MacBooks — PRO q2 streaming "experimental but usable for inspection".** Metal's primary target is **Macs with 96 GB+**; smaller machines get `--ssd-streaming`. **Created back in May — ~20k stars and climbing, so trending, not new.** Its README also credits GPT 5.5, 5.6 and Claude Fable with "strong assistance", humans leading ideas, testing and debugging.
+- **The Recipe — put a pass/fail gate on your prompts before you change models.** promptfoo 0.122.0, **MIT — verified from the installed `package.json` and npm's registry entry.** (Neither OpenAI's post nor promptfoo's names a licence at all; OpenAI's says they'll "continue building the open-source project", which is a claim about openness, not a second confirmation of MIT.) **OpenAI announced its intent to acquire Promptfoo on Monday 9 March 2026 — announced, not closed: the post is titled "OpenAI *to acquire* Promptfoo" and says closing is subject to customary conditions.** Founders **Ian Webster** and **Michael D'Angelo** — worth knowing that an OpenAI-bound tool grades every vendor's models. **Price: Community is "Free Forever" including red teaming capped at 10,000 probes/month; Enterprise and On-Premise both say "Custom", which means promptfoo names no price — not the same as free.** Node floor is **`>=22.22.0`**, read off the installed package; the GitHub Action states the same floor and recommends Node 24 LTS.
+- **The steps** — `npx promptfoo@latest init --no-interactive` (**plain `init` is a wizard** — with nothing attached to answer it, it exits **130** and writes no files) → get a **zero-cost green run first** using the `echo` provider (seven deterministic assertion types passed, $0 spent) → then swap in the provider you actually ship → gate CI on the exit code.
+- **The exit-code contract, measured rather than quoted** — all pass: **0**. At least one assertion fails: **100**. Typo'd provider id, missing config, missing API key: **1**. So "promptfoo returns non-zero" is true and useless — a shell check for `$? -eq 1` catches the broken setup and **silently ignores every failing test**. (The 100 is the default; `PROMPTFOO_FAILED_TEST_EXIT_CODE` can override it, so check inherited CI before assuming.)
+- **Tip 1 — the threshold unit trap.** `PROMPTFOO_PASS_RATE_THRESHOLD` is a **percentage**, and it's inclusive (`>=`). Against a rigged 50% pass rate: `60` → exit 100, `50` → exit 0, **`0.9` → exit 0**, because it means 0.9%. **Write `90`, not `0.9`.** Precisely what's silent: the terminal *does* still print `✗ 1 failed (50.00%)` — what you don't get is any threshold message (that line only prints when the gate trips) and, critically, the **exit code is 0**. A human sees the failure; the machine gating your deploy sees success. The counter-intuitive bonus: **misspelling the variable name is safe** — `PROMPTFOO_PASSRATE_THRESHOLD` is ignored, the default applies, and the gate still fires. The name is forgiving; the value is not.
+- **Tip 2 — a typo'd assertion `type:` counts as an "error", not a "failure".** It still exits 100, so CI catches it, but the summary reads `0 passed, 0 failed, 1 error` — so a dashboard counting *failures* shows a clean green bar while nothing ran. Count errors too, or trust only the exit code.
+- **The honest counter-argument** — Hamel Husain and Shreya Shankar's evals FAQ, aired rather than softened. Note the attribution: the sharpest line ("all you get from prefab evals is you don't know what they actually do… at worst they create an illusion of confidence that is unjustified") is the FAQ **quoting one of their instructors, Eleanor Berger** — the authors' own version is "generic evaluations waste time and create false confidence". Theirs directly: "if you're passing 100% of your evals, you're likely not challenging your system enough", and you should be "extremely skeptical of this process being delegated". The harness is the easy part; the assertions are not.
+- **Stated on air** — none of this was run against a live frontier model this week. Everything was verified on Windows / Node 24.18.0 with the `echo` provider, so latency, cost accounting and `llm-rubric` model-graded behaviour are **not verified**. Also disclosed: **Claude Code requires a paid Claude plan (Pro, Max, Team, Enterprise, or API billing) — nothing on the free tier.**
+- **Do This Today** — one folder, one `promptfooconfig.yaml`, two test cases (one passing, one failing), then check the exit code. **You're looking for 100, not 1.**
+
+## Sources
+
+**Fresh Finds**
+- [moonshotai/Kimi-K3 — Hugging Face](https://huggingface.co/moonshotai/Kimi-K3)
+- [Kimi K3 LICENSE](https://huggingface.co/moonshotai/Kimi-K3/blob/main/LICENSE)
+- [Kimi-K2-Instruct LICENSE (for the "Modified MIT" contrast)](https://huggingface.co/moonshotai/Kimi-K2-Instruct/blob/main/LICENSE)
+- [Simon Willison — Kimi K3](https://simonwillison.net/2026/Jul/27/kimi-k3/)
+- [deepseek-ai/DeepSeek-V4-Flash-0731 — Hugging Face](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731)
+- [DeepSeek-V4-Flash-0731 — HF model API (parameter count)](https://huggingface.co/api/models/deepseek-ai/DeepSeek-V4-Flash-0731)
+- [antirez/ds4 — "DwarfStar"](https://github.com/antirez/ds4)
+- [ds4 README](https://github.com/antirez/ds4/blob/main/README.md)
+- [ds4 LICENSE](https://github.com/antirez/ds4/blob/main/LICENSE)
+
+**The Recipe**
+- [promptfoo — getting started](https://www.promptfoo.dev/docs/getting-started/)
+- [promptfoo — command line reference (exit codes)](https://www.promptfoo.dev/docs/usage/command-line/)
+- [promptfoo — the `echo` provider](https://www.promptfoo.dev/docs/providers/echo/)
+- [promptfoo — GitHub Action](https://www.promptfoo.dev/docs/integrations/github-action/)
+- [promptfoo — pricing](https://www.promptfoo.dev/pricing/)
+- [OpenAI to acquire Promptfoo](https://openai.com/index/openai-to-acquire-promptfoo/)
+- [Promptfoo — joining OpenAI](https://www.promptfoo.dev/blog/promptfoo-joining-openai/)
+- [Hamel Husain and Shreya Shankar — Evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+- **Culmen Games** — a solo-built indie game studio. studiosculmen@gmail.com
+- **Handled** — done-for-you content and AI agent workflows for creators and time-poor professionals. handled.anmol@gmail.com]]></content:encoded>
+      <enclosure url="https://ansa30-06.github.io/ai-tips-podcast/audio/0006.mp3" length="26386642" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Episode 5: The Hook Git Fires That Nobody Documents</title>
+      <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
+      <guid isPermaLink="false">ai-workflow-daily-0005</guid>
+      <pubDate>Fri, 07 Aug 2026 06:00:00 +0530</pubDate>
+      <itunes:season>1</itunes:season>
+      <itunes:episode>5</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:duration>00:18:56</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:author>Anmol</itunes:author>
+      <description><![CDATA[`git worktree add` fires the `post-checkout` hook — and the `git-worktree` man page never mentions hooks at all. That one undocumented line is how every parallel agent gets its own ports, its own database and its own `.env` automatically, instead of by hand forever. Episode 3 gave every agent its own worktree; this is the layer underneath it. Plus three finds, two tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- **Cloudflare OS (5 Aug 2026)** — an agent workspace on Cloudflare Workers: isolated runtime, governance layer for internal data and services. **Apache-2.0** (licence file read directly), free to self-host on your own Cloudflare account. The planned managed dashboard product **names no price**. The README calls the project **"in a state of heavy development"** and an **"early access" release**. "Thousands of people across every function" using it internally daily is **Cloudflare's own count**, unaudited.
+- **Meta Muse Code (beta) + Muse Spark 1.2 (5 Aug 2026)** — Meta's terminal coding agent. **No licence stated anywhere**, so not "open source". **No price stated for the CLI**, which is not the same as free. **macOS and Linux only — no Windows.** Install host is `dev.meta.ai`, *not* `developers.meta.ai` — and the flag is `-fsSL`, with a **capital S and a capital L** (curl's flags are case-sensitive, and a lowercase `-l` is a different flag that fails quietly). Model API, per Artificial Analysis attributing Meta's API: **$1.25 / 1M input tokens, $4.25 / 1M output tokens** (standard tier). Meta's post shows benchmark **charts with no numbers printed in the text**.
+- **"How Castform + Neon Beats Frontier Models on Price and Efficiency"** — a 4B open-source model post-trained to match GPT-5.6 Sol on search retrieval at 100x less cost. The unit that matters: **~$0.03 per end-to-end multi-turn search request**. The honesty beat is what's missing — no base model named, no licence, no numeric accuracy scores, no benchmark named — and Hacker News said so.
+- **The Recipe** — give every parallel agent its own ports, database and env file automatically: slugify the branch, install one `post-checkout` hook, derive identity and ports, generate the env file, isolate Compose projects, isolate database names, and set per-worktree git config.
+- **Tip 1** — stop allocating ports at all. Publish a container port in Compose with **no host port**, let the kernel pick, and read it back with `docker compose port SERVICE PRIVATE_PORT`. Zero collisions by construction.
+- **Tip 2, and a correction we ran ourselves** — the docs say `git config --worktree` behaves as `--local` when `extensions.worktreeConfig` is unset, which sounds like a silent data leak across worktrees. It isn't. With a second worktree present git **hard-errors** (`fatal: --worktree cannot be used with multiple working trees…`, exit 128, nothing written). The silent fallback only happens in a repo with exactly one worktree — where there's nobody to leak into. Correct quote, wrong inference; running the command settled it in ten seconds.
+- **Spelling, said out loud** — the file is `.worktreeinclude`: one word, no hyphen, leading dot. The standalone binary `git-worktreeinclude` (MIT, by Satoshi Ebisawa) **does** have a hyphen, and you invoke it as `git worktreeinclude apply`. Note Claude Code requires a paid Claude plan — there is no free tier.
+- **The published counter-argument** — David Mytton (Arcjet) built this shape and rejected parts of it: dynamic ports don't propagate through the devcontainer spec, and per-workspace databases cost too much on a laptop. They run one shared infrastructure stack instead, and accept there's no per-workspace data isolation.
+- **Do This Today** — write a two-line `post-checkout` hook that fires on the null ref (forty zeros), and prove to yourself that `git worktree add` runs it.
+
+## Sources
+
+**Fresh Finds**
+- [Cloudflare OS — announcement](https://blog.cloudflare.com/cloudflare-os/)
+- [cloudflare/cloudflare-os](https://github.com/cloudflare/cloudflare-os)
+- [Introducing Muse Code and Muse Spark 1.2 — Meta AI Research](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2)
+- [How Castform + Neon beats frontier models on price and efficiency](https://neon.com/blog/how-castform-neon-beats-frontier-models-on-price-and-efficiency)
+- [Hacker News discussion](https://news.ycombinator.com/item?id=49186762)
+
+**The Recipe**
+- [Ally Piechowski — A setup script for git worktrees](https://piechowski.io/post/setup-script-git-worktrees/)
+- [githooks — official documentation](https://git-scm.com/docs/githooks)
+- [git-worktree — official documentation](https://git-scm.com/docs/git-worktree)
+- [git-config — official documentation](https://git-scm.com/docs/git-config)
+- [Mark Skelton — Using Git hooks when creating worktrees](https://mskelton.dev/bytes/using-git-hooks-when-creating-worktrees)
+- [Claude Code — worktrees and `.worktreeinclude`](https://code.claude.com/docs/en/worktrees)
+- [Conductor — `.worktreeinclude` reference](https://www.conductor.build/docs/reference/worktreeinclude)
+- [satococoa/git-worktreeinclude — Satoshi Ebisawa](https://github.com/satococoa/git-worktreeinclude)
+- [Docker Compose — specify a project name](https://docs.docker.com/compose/how-tos/project-name/)
+- [docker compose port](https://docs.docker.com/reference/cli/docker/compose/port/)
+- [PostgreSQL — CREATE DATABASE](https://www.postgresql.org/docs/current/sql-createdatabase.html)
+- [JD Wuarin — The missing piece of the Claude Code workflow: isolation](https://www.barnacle.ai/blog/2026-02-07-the-missing-piece-of-the-claude-code-workflow-isol)
+- [David Mytton, Arcjet — From devcontainers to VMs: parallel dev environments for AI agents](https://blog.arcjet.com/from-devcontainers-to-vms-parallel-dev-environments-for-ai-agents/)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+- **Culmen Games** — a solo-built indie game studio. studiosculmen@gmail.com
+- **Handled** — done-for-you content and AI agent workflows for creators and time-poor professionals. handled.anmol@gmail.com]]></description>
+      <content:encoded><![CDATA[`git worktree add` fires the `post-checkout` hook — and the `git-worktree` man page never mentions hooks at all. That one undocumented line is how every parallel agent gets its own ports, its own database and its own `.env` automatically, instead of by hand forever. Episode 3 gave every agent its own worktree; this is the layer underneath it. Plus three finds, two tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- **Cloudflare OS (5 Aug 2026)** — an agent workspace on Cloudflare Workers: isolated runtime, governance layer for internal data and services. **Apache-2.0** (licence file read directly), free to self-host on your own Cloudflare account. The planned managed dashboard product **names no price**. The README calls the project **"in a state of heavy development"** and an **"early access" release**. "Thousands of people across every function" using it internally daily is **Cloudflare's own count**, unaudited.
+- **Meta Muse Code (beta) + Muse Spark 1.2 (5 Aug 2026)** — Meta's terminal coding agent. **No licence stated anywhere**, so not "open source". **No price stated for the CLI**, which is not the same as free. **macOS and Linux only — no Windows.** Install host is `dev.meta.ai`, *not* `developers.meta.ai` — and the flag is `-fsSL`, with a **capital S and a capital L** (curl's flags are case-sensitive, and a lowercase `-l` is a different flag that fails quietly). Model API, per Artificial Analysis attributing Meta's API: **$1.25 / 1M input tokens, $4.25 / 1M output tokens** (standard tier). Meta's post shows benchmark **charts with no numbers printed in the text**.
+- **"How Castform + Neon Beats Frontier Models on Price and Efficiency"** — a 4B open-source model post-trained to match GPT-5.6 Sol on search retrieval at 100x less cost. The unit that matters: **~$0.03 per end-to-end multi-turn search request**. The honesty beat is what's missing — no base model named, no licence, no numeric accuracy scores, no benchmark named — and Hacker News said so.
+- **The Recipe** — give every parallel agent its own ports, database and env file automatically: slugify the branch, install one `post-checkout` hook, derive identity and ports, generate the env file, isolate Compose projects, isolate database names, and set per-worktree git config.
+- **Tip 1** — stop allocating ports at all. Publish a container port in Compose with **no host port**, let the kernel pick, and read it back with `docker compose port SERVICE PRIVATE_PORT`. Zero collisions by construction.
+- **Tip 2, and a correction we ran ourselves** — the docs say `git config --worktree` behaves as `--local` when `extensions.worktreeConfig` is unset, which sounds like a silent data leak across worktrees. It isn't. With a second worktree present git **hard-errors** (`fatal: --worktree cannot be used with multiple working trees…`, exit 128, nothing written). The silent fallback only happens in a repo with exactly one worktree — where there's nobody to leak into. Correct quote, wrong inference; running the command settled it in ten seconds.
+- **Spelling, said out loud** — the file is `.worktreeinclude`: one word, no hyphen, leading dot. The standalone binary `git-worktreeinclude` (MIT, by Satoshi Ebisawa) **does** have a hyphen, and you invoke it as `git worktreeinclude apply`. Note Claude Code requires a paid Claude plan — there is no free tier.
+- **The published counter-argument** — David Mytton (Arcjet) built this shape and rejected parts of it: dynamic ports don't propagate through the devcontainer spec, and per-workspace databases cost too much on a laptop. They run one shared infrastructure stack instead, and accept there's no per-workspace data isolation.
+- **Do This Today** — write a two-line `post-checkout` hook that fires on the null ref (forty zeros), and prove to yourself that `git worktree add` runs it.
+
+## Sources
+
+**Fresh Finds**
+- [Cloudflare OS — announcement](https://blog.cloudflare.com/cloudflare-os/)
+- [cloudflare/cloudflare-os](https://github.com/cloudflare/cloudflare-os)
+- [Introducing Muse Code and Muse Spark 1.2 — Meta AI Research](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2)
+- [How Castform + Neon beats frontier models on price and efficiency](https://neon.com/blog/how-castform-neon-beats-frontier-models-on-price-and-efficiency)
+- [Hacker News discussion](https://news.ycombinator.com/item?id=49186762)
+
+**The Recipe**
+- [Ally Piechowski — A setup script for git worktrees](https://piechowski.io/post/setup-script-git-worktrees/)
+- [githooks — official documentation](https://git-scm.com/docs/githooks)
+- [git-worktree — official documentation](https://git-scm.com/docs/git-worktree)
+- [git-config — official documentation](https://git-scm.com/docs/git-config)
+- [Mark Skelton — Using Git hooks when creating worktrees](https://mskelton.dev/bytes/using-git-hooks-when-creating-worktrees)
+- [Claude Code — worktrees and `.worktreeinclude`](https://code.claude.com/docs/en/worktrees)
+- [Conductor — `.worktreeinclude` reference](https://www.conductor.build/docs/reference/worktreeinclude)
+- [satococoa/git-worktreeinclude — Satoshi Ebisawa](https://github.com/satococoa/git-worktreeinclude)
+- [Docker Compose — specify a project name](https://docs.docker.com/compose/how-tos/project-name/)
+- [docker compose port](https://docs.docker.com/reference/cli/docker/compose/port/)
+- [PostgreSQL — CREATE DATABASE](https://www.postgresql.org/docs/current/sql-createdatabase.html)
+- [JD Wuarin — The missing piece of the Claude Code workflow: isolation](https://www.barnacle.ai/blog/2026-02-07-the-missing-piece-of-the-claude-code-workflow-isol)
+- [David Mytton, Arcjet — From devcontainers to VMs: parallel dev environments for AI agents](https://blog.arcjet.com/from-devcontainers-to-vms-parallel-dev-environments-for-ai-agents/)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+- **Culmen Games** — a solo-built indie game studio. studiosculmen@gmail.com
+- **Handled** — done-for-you content and AI agent workflows for creators and time-poor professionals. handled.anmol@gmail.com]]></content:encoded>
+      <enclosure url="https://ansa30-06.github.io/ai-tips-podcast/audio/0005.mp3" length="27273760" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Episode 4: Your Five Agent Branches Are a Fan, Not a Stack</title>
+      <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
+      <guid isPermaLink="false">ai-workflow-daily-0004</guid>
+      <pubDate>Thu, 06 Aug 2026 06:00:00 +0530</pubDate>
+      <itunes:season>1</itunes:season>
+      <itunes:episode>4</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:duration>00:19:53</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:author>Anmol</itunes:author>
+      <description><![CDATA[Five agents finish overnight and leave you five branches. GitHub's stacked pull requests, in public preview since 30 July 2026, look like the answer — until you read GitHub's own docs, which say stacks can't have branching structures, and five siblings off `main` are exactly that. So this episode is the honest version: sort your branches into genuinely-dependent and independent first, and only the dependent list becomes a stack. Plus three finds, two tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- **Open Code Review (Alibaba Group)** — deterministic pipelines plus an LLM agent leaving line-level PR comments. Apache-2.0, but bring-your-own-key, so the running cost is your model provider's per-token rate. Its Claude Code comparison is self-graded on a benchmark Alibaba built.
+- **Soup (`soup-cli`, Alpamys Makazhan)** — the whole fine-tune config is one YAML file, and "layer streaming" fine-tunes an 8B on a 4 GB laptop GPU. Apache-2.0; the site says free forever. Layer streaming is marked BETA by the maintainer.
+- **Shieldstral-1.0-3B (Mistral AI)** — a 3B guardrail model that takes your safety policy as plain-language text at inference time, classifying text and images on one 16 GB GPU. Apache 2.0, weights free to download.
+- **All three finds' benchmark numbers are maker-measured** — Alibaba graded Alibaba, the maintainer graded Soup, Mistral graded Mistral. No independent replication found for any of them.
+- **The Recipe: sort first, then stack** — why five parallel agent branches are a fan and not a stack, the ten steps, what success looks like, and the failure modes.
+- **The version-floor correction** — episode 3 said `gh` 2.0+, which came from the extension's README. The feature's own quickstart requires **`gh` 2.90.0 or later and Git 2.20 or later**. Both numbers are GitHub's; state the higher one.
+- **The price, stated carefully** — across six GitHub-owned pages, GitHub names no price, no plan, no tier. That is not the same as GitHub saying it's free. The `gh-stack` extension itself is MIT, and that part is unambiguous.
+- **Tip 1** — turn on `git rerere` globally before you cascade-rebase anything. `gh stack init` enables it, but only inside that repo.
+- **Tip 2** — exit code 9 says "stacked pull requests not enabled for this repository," but issue #394 reports that message appearing when the real cause was the wrong active `gh` account. Run `gh auth status` first.
+- **Do This Today** — check your floors, turn on rerere, install the extension, then write two lists of your agent branches: genuinely dependent, and independent.
+
+## Sources
+
+**Fresh Finds**
+- [Open Code Review — alibaba/open-code-review](https://github.com/alibaba/open-code-review)
+- [Open Code Review — project site](https://open-codereview.ai)
+- [Soup — MakazhanAlpamys/Soup](https://github.com/MakazhanAlpamys/Soup)
+- [trysoup.dev](https://trysoup.dev)
+- [Shieldstral — Mistral AI announcement](https://mistral.ai/news/shieldstral/)
+- [Shieldstral-1.0-3B — model card](https://huggingface.co/mistralai/Shieldstral-1.0-3B)
+
+**The Recipe**
+- [Stacked pull requests are now in public preview](https://github.blog/changelog/2026-07-30-stacked-pull-requests-are-now-in-public-preview/)
+- [Stacked PRs quickstart](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)
+- [About stacked pull requests](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs)
+- [Stacked pull requests reference](https://docs.github.com/en/pull-requests/reference/stacked-pull-requests)
+- [Stacked PRs CLI commands](https://docs.github.com/en/pull-requests/reference/stacked-prs-cli-commands)
+- [Roll out stacked PRs across your organization](https://docs.github.com/en/pull-requests/tutorials/roll-out-stacked-prs)
+- [Managing stacked pull requests](https://docs.github.com/en/pull-requests/how-tos/create-pull-requests/managing-stacked-pull-requests)
+- [Troubleshooting stacked pull requests](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-stacked-pull-requests)
+- [Stack AI-generated code in pull requests (Copilot tutorial)](https://docs.github.com/en/copilot/tutorials/stack-ai-generated-code-in-pull-requests)
+- [github/gh-stack](https://github.com/github/gh-stack)
+- [github/gh-stack — releases](https://github.com/github/gh-stack/releases)
+- [github/gh-stack — open issues](https://github.com/github/gh-stack/issues)
+- [GitHub CLI v2.90.0 release notes](https://github.com/cli/cli/releases/tag/v2.90.0)
+- [Managing a merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)
+- [Tom Smith, DevOps.com — GitHub brings stacked pull requests out of the shadows](https://devops.com/github-brings-stacked-pull-requests-out-of-the-shadows/)
+- [Flavio Copes — GitHub stacked PRs](https://flaviocopes.com/github-stacked-prs/)
+- [GitHub community discussion #201439](https://github.com/orgs/community/discussions/201439)
+- [Lobsters — Stacked pull requests are now public](https://lobste.rs/s/pzl6f0/stacked_pull_requests_are_now_public)
+- [Mike McQuaid — Sandboxed agent worktrees](https://mikemcquaid.com/sandboxed-agent-worktrees-my-coding-and-ai-setup-in-2026/)
+- [Graphite pricing](https://graphite.com/pricing)
+- [AgenticFlict — Ogenrwot & Businge, arXiv 2604.03551](https://arxiv.org/abs/2604.03551)
+
+**Two Quick Tips**
+- [git-rerere — official documentation](https://git-scm.com/docs/git-rerere)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+
+- **Culmen Games** — solo indie Android game studio — studiosculmen@gmail.com
+- **Handled** — done-for-you content + AI agent workflows for creators and time-poor professionals — handled.anmol@gmail.com]]></description>
+      <content:encoded><![CDATA[Five agents finish overnight and leave you five branches. GitHub's stacked pull requests, in public preview since 30 July 2026, look like the answer — until you read GitHub's own docs, which say stacks can't have branching structures, and five siblings off `main` are exactly that. So this episode is the honest version: sort your branches into genuinely-dependent and independent first, and only the dependent list becomes a stack. Plus three finds, two tips, and one ten-minute thing to do today.
+
+## In this episode
+
+- **Open Code Review (Alibaba Group)** — deterministic pipelines plus an LLM agent leaving line-level PR comments. Apache-2.0, but bring-your-own-key, so the running cost is your model provider's per-token rate. Its Claude Code comparison is self-graded on a benchmark Alibaba built.
+- **Soup (`soup-cli`, Alpamys Makazhan)** — the whole fine-tune config is one YAML file, and "layer streaming" fine-tunes an 8B on a 4 GB laptop GPU. Apache-2.0; the site says free forever. Layer streaming is marked BETA by the maintainer.
+- **Shieldstral-1.0-3B (Mistral AI)** — a 3B guardrail model that takes your safety policy as plain-language text at inference time, classifying text and images on one 16 GB GPU. Apache 2.0, weights free to download.
+- **All three finds' benchmark numbers are maker-measured** — Alibaba graded Alibaba, the maintainer graded Soup, Mistral graded Mistral. No independent replication found for any of them.
+- **The Recipe: sort first, then stack** — why five parallel agent branches are a fan and not a stack, the ten steps, what success looks like, and the failure modes.
+- **The version-floor correction** — episode 3 said `gh` 2.0+, which came from the extension's README. The feature's own quickstart requires **`gh` 2.90.0 or later and Git 2.20 or later**. Both numbers are GitHub's; state the higher one.
+- **The price, stated carefully** — across six GitHub-owned pages, GitHub names no price, no plan, no tier. That is not the same as GitHub saying it's free. The `gh-stack` extension itself is MIT, and that part is unambiguous.
+- **Tip 1** — turn on `git rerere` globally before you cascade-rebase anything. `gh stack init` enables it, but only inside that repo.
+- **Tip 2** — exit code 9 says "stacked pull requests not enabled for this repository," but issue #394 reports that message appearing when the real cause was the wrong active `gh` account. Run `gh auth status` first.
+- **Do This Today** — check your floors, turn on rerere, install the extension, then write two lists of your agent branches: genuinely dependent, and independent.
+
+## Sources
+
+**Fresh Finds**
+- [Open Code Review — alibaba/open-code-review](https://github.com/alibaba/open-code-review)
+- [Open Code Review — project site](https://open-codereview.ai)
+- [Soup — MakazhanAlpamys/Soup](https://github.com/MakazhanAlpamys/Soup)
+- [trysoup.dev](https://trysoup.dev)
+- [Shieldstral — Mistral AI announcement](https://mistral.ai/news/shieldstral/)
+- [Shieldstral-1.0-3B — model card](https://huggingface.co/mistralai/Shieldstral-1.0-3B)
+
+**The Recipe**
+- [Stacked pull requests are now in public preview](https://github.blog/changelog/2026-07-30-stacked-pull-requests-are-now-in-public-preview/)
+- [Stacked PRs quickstart](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)
+- [About stacked pull requests](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs)
+- [Stacked pull requests reference](https://docs.github.com/en/pull-requests/reference/stacked-pull-requests)
+- [Stacked PRs CLI commands](https://docs.github.com/en/pull-requests/reference/stacked-prs-cli-commands)
+- [Roll out stacked PRs across your organization](https://docs.github.com/en/pull-requests/tutorials/roll-out-stacked-prs)
+- [Managing stacked pull requests](https://docs.github.com/en/pull-requests/how-tos/create-pull-requests/managing-stacked-pull-requests)
+- [Troubleshooting stacked pull requests](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-stacked-pull-requests)
+- [Stack AI-generated code in pull requests (Copilot tutorial)](https://docs.github.com/en/copilot/tutorials/stack-ai-generated-code-in-pull-requests)
+- [github/gh-stack](https://github.com/github/gh-stack)
+- [github/gh-stack — releases](https://github.com/github/gh-stack/releases)
+- [github/gh-stack — open issues](https://github.com/github/gh-stack/issues)
+- [GitHub CLI v2.90.0 release notes](https://github.com/cli/cli/releases/tag/v2.90.0)
+- [Managing a merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue)
+- [Tom Smith, DevOps.com — GitHub brings stacked pull requests out of the shadows](https://devops.com/github-brings-stacked-pull-requests-out-of-the-shadows/)
+- [Flavio Copes — GitHub stacked PRs](https://flaviocopes.com/github-stacked-prs/)
+- [GitHub community discussion #201439](https://github.com/orgs/community/discussions/201439)
+- [Lobsters — Stacked pull requests are now public](https://lobste.rs/s/pzl6f0/stacked_pull_requests_are_now_public)
+- [Mike McQuaid — Sandboxed agent worktrees](https://mikemcquaid.com/sandboxed-agent-worktrees-my-coding-and-ai-setup-in-2026/)
+- [Graphite pricing](https://graphite.com/pricing)
+- [AgenticFlict — Ogenrwot & Businge, arXiv 2604.03551](https://arxiv.org/abs/2604.03551)
+
+**Two Quick Tips**
+- [git-rerere — official documentation](https://git-scm.com/docs/git-rerere)
+
+---
+
+Sister show: **The AI Daily Wire** — the daily AI news brief from the same network. Different host, same standards.
+
+## Built by
+
+- **Culmen Games** — solo indie Android game studio — studiosculmen@gmail.com
+- **Handled** — done-for-you content + AI agent workflows for creators and time-poor professionals — handled.anmol@gmail.com]]></content:encoded>
+      <enclosure url="https://ansa30-06.github.io/ai-tips-podcast/audio/0004.mp3" length="28645502" type="audio/mpeg"/>
+    </item>
     <item>
       <title>Episode 3: Your Agent Is Fixing a Bug That Doesn't Exist</title>
       <link>https://ansa30-06.github.io/ai-tips-podcast/</link>
